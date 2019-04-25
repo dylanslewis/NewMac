@@ -1,0 +1,73 @@
+#------------------------------------------------------------------------------#
+# Get API tokens                                                               #
+#------------------------------------------------------------------------------#
+
+. .tokens.sh
+
+#------------------------------------------------------------------------------#
+# Local variables                                                              #
+#------------------------------------------------------------------------------#
+
+TAB=$'\t'
+TEMP_FRAME_DIR=$'.tempframing'
+
+#------------------------------------------------------------------------------#
+# Aliases                                                                      #
+#------------------------------------------------------------------------------#
+
+## Generic
+alias c='clear'
+
+## Xcode
+alias rddnoopen='killall Xcode; sleep 1 && rm -rf ~/Library/Developer/Xcode/DerivedData && echo "Removed Xcode derived data"'
+alias rdd='rddnoopen && open /Applications/Xcode.app'
+alias removepp='rm -rf ~/Library/MobileDevice/Provisioning\ Profiles'
+
+## Swift Package Manager
+alias spmupdate="swift package update && swift package generate-xcodeproj"
+alias spmproj="swift package generate-xcodeproj"
+
+## Git
+alias todos="c; git diff | grep TODO | grep + | grep -v ISAV- | sed 's/+//g' | sed 's/$TAB//g'; git diff | grep FIXME | grep + | grep -v ISAV- | sed 's/+//g' | sed 's/$TAB//g'"
+alias fixmes="todos"
+alias clearbranches='git remote prune origin && git branch | grep -v "develop" | xargs git branch -D'
+alias clearstashes='git stash clear'
+alias savemyass="git reset --soft HEAD~1"
+alias teamstatus="open -a TeamStatus.app --args https://github.com/YOUR_TEAM/YOUR_REPO $TEAMSTATUS_GITHUB_API_KEY"
+
+## Design
+alias slackmojify="mogrify -resize 128x128 -unsharp 2x1.4+0.5+0 -quality 100 -verbose"
+alias sketchtool="/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool"
+
+#------------------------------------------------------------------------------#
+# Functions                                                                    #
+#------------------------------------------------------------------------------#
+
+## Design
+
+### Frames all pngs in the current directory in an iOS device, or a given single
+### image.
+frame()
+{
+	mkdir $TEMP_FRAME_DIR
+	if [ -z "$1" ]; then
+		echo "Framing all pngs in this directory"
+		cp *.png $TEMP_FRAME_DIR
+	else
+		echo "Framing $1"
+		cp "$1" $TEMP_FRAME_DIR
+	fi
+	cd $TEMP_FRAME_DIR
+	frameit
+	cd ..
+	mv $TEMP_FRAME_DIR/*_framed.png .
+	rm -rf $TEMP_FRAME_DIR
+	open .
+}
+
+#------------------------------------------------------------------------------#
+# Exports                                                                      #
+#------------------------------------------------------------------------------#
+
+export PATH="$HOME/.fastlane/bin:$PATH"
+
