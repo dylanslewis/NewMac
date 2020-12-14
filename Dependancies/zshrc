@@ -19,9 +19,9 @@ TEMP_FRAME_DIR=$'.tempframing'
 alias c='clear'
 
 ## Xcode
-alias rddnoopen='killall Xcode; sleep 1 && rm -rf ~/Library/Developer/Xcode/DerivedData && echo "Removed Xcode derived data"'
-alias rdd='rddnoopen && open /Applications/Xcode.app'
+alias rdd='killall Xcode; sleep 1 && rm -rf ~/Library/Developer/Xcode/DerivedData && echo "Removed Xcode derived data" && open /Applications/Xcode.app'
 alias removepp='rm -rf ~/Library/MobileDevice/Provisioning\ Profiles'
+alias sim='xcrun simctl openurl booted'
 
 ## Swift Package Manager
 alias spmupdate="swift package update && swift package generate-xcodeproj"
@@ -30,10 +30,20 @@ alias spmproj="swift package generate-xcodeproj"
 ## Git
 alias todos="c; git diff | grep TODO | grep + | grep -v ISAV- | sed 's/+//g' | sed 's/$TAB//g'; git diff | grep FIXME | grep + | grep -v ISAV- | sed 's/+//g' | sed 's/$TAB//g'"
 alias fixmes="todos"
-alias clearbranches='git remote prune origin && git branch | grep -v "develop" | xargs git branch -D'
+alias clearbranches='git remote prune origin && git branch | grep -v "master" | xargs git branch -D'
 alias clearstashes='git stash clear'
 alias savemyass="git reset --soft HEAD~1"
-alias teamstatus="open -a TeamStatus.app --args https://github.com/YOUR_TEAM/YOUR_REPO $TEAMSTATUS_GITHUB_API_KEY"
+alias gitdiff="git diff --cached --stat"
+alias gitdiffmaster="git diff --numstat master | awk '{ added += $1; removed += $2 } END { print "+" added " -" removed }'"
+alias gc="git fetch && git checkout"
+alias gcm="gc master && git pull"
+ufm() {
+    git fetch
+    if [ -n "$1" ]; then
+        git checkout "$1"
+    fi
+    git pull && git merge origin/master && git push
+}
 
 ## Design
 alias slackmojify="mogrify -resize 128x128 -unsharp 2x1.4+0.5+0 -quality 100 -verbose"
